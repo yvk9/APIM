@@ -1,0 +1,30 @@
+name: $(Build.Repository.Name)-$(SourceBranchName)-$(Date:yyyyMMdd)$(Rev:.r)
+trigger:
+  branches:
+    include:
+      - "*"
+
+pr:
+  branches:
+    include:
+      - "*"
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: enterprise-templates
+      ref: refs/heads/main
+
+pool: 'itops'
+
+stages:
+- stage: Validate
+  displayName: Validate Terraform Module
+  jobs:
+  - job: TerraformValidation
+    displayName: Terraform Validation
+    steps:
+    - template: azure-pipelines/terraform/validate-module.yml@templates
+      parameters:
+        tf_version: "latest"
